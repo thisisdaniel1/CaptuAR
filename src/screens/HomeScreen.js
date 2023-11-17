@@ -1,75 +1,55 @@
-import React, { useState, useEffect } from "react";
-import { Text, View, StyleSheet, PLatform } from "react-native";
-import MapView, {Polyline, Circle} from "react-native-maps";
-import * as Location from "expo-location";
+import React, { useState, useEffect, useContext } from "react";
+import { Text, View, StyleSheet } from "react-native";
+import Map from "./components/Map";
+// import { Context as LocationContext } from "../context/LocationContext";
+import "./_mockLocation";
+import { Accuracy, requestForegroundPermissionsAsync, watchPositionAsync } from "expo-location";
 
 const HomeScreen = () => {
 
-  const [location, setLocation] = useState(null);
-  const [errorMsg, setErrorMsg] = useState(null);
+  // const {addLocation} = useContext(LocationContext);
+  const [err, setErr] = useState(null);
 
-  useEffect(() => {
-    (async () => {
-      let {status} = await Location.requestForegroundPermissionsAsync();
-      // if user has not granted permission, skip
-      if (status !== "granted"){
-        setErrorMsg("Permission to access location was denied");
-        return;
+  const startWatching = async () => {
+    try{
+      const { granted } = await requestForegroundPermissionsAsync();
+      
+
+      await watchPositionAsync({
+        accuracy: Accuracy.BestForNavigation,
+        // updates either every 10 meters or every 1 second
+        timeInterval: 1000,
+        distanceInterval: 10
+        // second argument is a callback function
+      }, (location) => {
+        // console.log(location);
+        addLocation(location);
+      })
+
+
+      if (!granted) {
+        throw new Error("Location permission not granted");
       }
+    }
+    // stores error message into err
+    catch(e){
+      console.log("threw error e is "+ e);
+      setErr(e);
+    }
+  };
 
-      let location = await Location.getCurrentPositionAsync({});
-      setLocation(location);
-    })();
-  }, []);
+  // gets called the first time this component is displayed
+  useEffect(() => {
+    startWatching();
+  }, [])
 
-  let text = "Waiting...";
-  if (errorMsg){
-    text = errorMsg;
-  }
-  else if (location){
-    
-    const {coords} = location;
-    const {latitude, longitude} = coords;
-
-    // console.log(latitude);
-    // console.log(longitude);
-    // console.log(coords);
-    // text = JSON.stringify(location);
-  }
-
-  return  <View style={styles.container}>
-      <MapView 
-          style={styles.map}
-          initialRegion={{
-            latitude: latitude,
-            longitude: longitude,
-            latitudeDelta: 0.01,
-            longitudeDelta: 0.01,
-          }}
-      >
-        <Circle
-          center={{
-            latitude: latitude,
-            longitude: longitude,}}
-            radius={200}
-            strokeColor="rgba(158,158,255,1.0)"
-            fillColor="rgba(158,158,255,0.3)"
-        />
-      </MapView>
+    return  <View>
+      <Map />
+      {err ? <Text>Please enable location services</Text> : null}
     </View>
-    // <View>
-    //   <Text>{text}</Text>
-    // </View>
   };
 
   const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-    },
-    map: {
-      width: "100%",
-      height: "100%",
-    },
   });
 
 export default HomeScreen;
