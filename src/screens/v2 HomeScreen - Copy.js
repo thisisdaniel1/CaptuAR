@@ -3,7 +3,6 @@ import { Text, View, StyleSheet, Button, Image } from "react-native";
 import { Context as LocationContext } from "../context/LocationContext";
 // import "./_mockLocation";
 import * as Location from "expo-location"
-import * as GeoFencing from "react-native-geo-fencing"
 import MapView, {Marker, Circle} from "react-native-maps";
 
 import DanielImage from "../../assets/daniel.jpg"
@@ -62,34 +61,8 @@ const HomeScreen = () => {
       console.log("threw error e is "+ e);
       setErr(e);
     }
-  }
-
-  const checkGeofence = async () => {
-    try {
-      const point = {
-        latitude: mapRegion.latitude,
-        longitude: mapRegion.longitude,
-      };
-
-      const geofence = {
-        latitude: targetCircle.center.latitude,
-        longitude: targetCircle.center.longitude,
-        radius: targetCircle.radius,
-      };
-
-      const isPointInFence = await GeoFencing.containsLocation(point, [geofence]);
-      
-      if (isPointInFence) {
-        console.log("Inside the geofence");
-      } else {
-        console.log("Outside the geofence");
-      }
-    } catch (error) {
-      console.error("Error checking geofence:", error);
-    }
   };
 
-  /*
   const getDistance = (lat1, lon1, lat2, lon2) => {
     const R = 6371; // Radius of the earth in km
     const dLat = deg2rad(lat2 - lat1); // deg2rad below
@@ -105,9 +78,7 @@ const HomeScreen = () => {
   const deg2rad = (deg) => {
     return deg * (Math.PI / 180);
   }
-  */
 
-  /*
   const checkCirclesOverlap = () => {
     // calculate the distance between the centers of the two circles
     const distance = getDistance(
@@ -126,9 +97,11 @@ const HomeScreen = () => {
       console.log("Circles are not overlapping")
     }
   }
-  */
 
+  // gets called the first time this component is displayed
   useEffect(() => {
+    startWatching();
+
     // Set initial targetCircle when the component mounts
     setTargetCircle({
       center: {
@@ -140,9 +113,10 @@ const HomeScreen = () => {
     console.log("Target: ", targetCircle)
   }, []);
 
-  // gets called the first time this component is displayed
   useEffect(() => {
     startWatching();
+
+    checkCirclesOverlap();
   }, [mapRegion])
 
     return  <View style={styles.container}>
@@ -151,8 +125,9 @@ const HomeScreen = () => {
       >
         <Marker 
           coordinate={mapRegion}
-          title="Marker">
-              <Image source={DanielImage} style={{ width: 50, height: 50, borderRadius: 25 }} />
+          title="Marker"
+        >
+          <Image source={DanielImage} style={{ width: 50, height: 50, borderRadius: 25 }} />
         </Marker>
         <Circle center={mapRegion} radius={5} />
         <Circle center={targetCircle.center} radius={targetCircle.radius} fillColor="rgba(255, 0, 0, 0.5)" />
@@ -162,7 +137,7 @@ const HomeScreen = () => {
       <Text>{"\n"}</Text>
       <Text>{"\n"}</Text>
       <Text>{"\n"}</Text>
-      <Button title="Check Geoforce" onPress={checkGeofence} />
+      <Button title="Check Overlap" onPress={checkCirclesOverlap} />
       {/* {err ? <Text>Please enable location services</Text> : null} */}
     </View>
   };

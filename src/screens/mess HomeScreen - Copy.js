@@ -3,7 +3,7 @@ import { Text, View, StyleSheet, Button, Image } from "react-native";
 import { Context as LocationContext } from "../context/LocationContext";
 // import "./_mockLocation";
 import * as Location from "expo-location"
-import * as GeoFencing from "react-native-geo-fencing"
+import GeoFencing from "react-native-geo-fencing"
 import MapView, {Marker, Circle} from "react-native-maps";
 
 import DanielImage from "../../assets/daniel.jpg"
@@ -62,7 +62,7 @@ const HomeScreen = () => {
       console.log("threw error e is "+ e);
       setErr(e);
     }
-  }
+  };
 
   const checkGeofence = async () => {
     try {
@@ -107,7 +107,6 @@ const HomeScreen = () => {
   }
   */
 
-  /*
   const checkCirclesOverlap = () => {
     // calculate the distance between the centers of the two circles
     const distance = getDistance(
@@ -126,7 +125,6 @@ const HomeScreen = () => {
       console.log("Circles are not overlapping")
     }
   }
-  */
 
   useEffect(() => {
     // Set initial targetCircle when the component mounts
@@ -162,7 +160,7 @@ const HomeScreen = () => {
       <Text>{"\n"}</Text>
       <Text>{"\n"}</Text>
       <Text>{"\n"}</Text>
-      <Button title="Check Geoforce" onPress={checkGeofence} />
+      <Button title="Check Overlap" onPress={checkCirclesOverlap} />
       {/* {err ? <Text>Please enable location services</Text> : null} */}
     </View>
   };
