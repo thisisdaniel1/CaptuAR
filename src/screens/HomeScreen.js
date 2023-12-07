@@ -1,9 +1,8 @@
 import React, { useState, useEffect, useContext } from "react";
 import { Text, View, StyleSheet, Button, Image } from "react-native";
 import { Context as LocationContext } from "../context/LocationContext";
-// import "./_mockLocation";
 import * as Location from "expo-location"
-import * as GeoFencing from "react-native-geo-fencing"
+import geolib from "geolib"
 import MapView, {Marker, Circle} from "react-native-maps";
 
 import DanielImage from "../../assets/daniel.jpg"
@@ -51,7 +50,6 @@ const HomeScreen = () => {
             latitudeDelta: 0.0001,
             longitudeDelta: 0.0001
           })
-          console.log(mapRegion)
           // addLocation(location);
         }
       )
@@ -64,86 +62,57 @@ const HomeScreen = () => {
     }
   }
 
-  const checkGeofence = async () => {
-    try {
-      const point = {
-        latitude: mapRegion.latitude,
-        longitude: mapRegion.longitude,
-      };
-
-      const geofence = {
-        latitude: targetCircle.center.latitude,
-        longitude: targetCircle.center.longitude,
-        radius: targetCircle.radius,
-      };
-
-      const isPointInFence = await GeoFencing.containsLocation(point, [geofence]);
-      
-      if (isPointInFence) {
-        console.log("Inside the geofence");
-      } else {
-        console.log("Outside the geofence");
-      }
-    } catch (error) {
-      console.error("Error checking geofence:", error);
-    }
-  };
-
-  /*
-  const getDistance = (lat1, lon1, lat2, lon2) => {
-    const R = 6371; // Radius of the earth in km
-    const dLat = deg2rad(lat2 - lat1); // deg2rad below
-    const dLon = deg2rad(lon2 - lon1);
-    const a =
-      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    const distance = R * c; // Distance in km
-    return distance;
-  }
-
-  const deg2rad = (deg) => {
-    return deg * (Math.PI / 180);
-  }
-  */
-
-  /*
-  const checkCirclesOverlap = () => {
-    // calculate the distance between the centers of the two circles
-    const distance = getDistance(
-      mapRegion.latitude,
-      mapRegion.longitude,
-      targetCircle.center.latitude,
-      targetCircle.center.longitude
+  const checkGeofence = () => {
+    const isInside = geolib.isPointWithinRadius(
+      { latitude: mapRegion.latitude, longitude: mapRegion.longitude },
+      { latitude: targetCircle.center.latitude, longitude: targetCircle.center.longitude },
+      targetCircle.radius // radius of target circle
     )
 
-    const minDistanceForOverlap = targetCircle.radius + 5
-
-    if (distance < minDistanceForOverlap){
-      console.log("Circles are overlapping")
+    if (isInside){
+      console.log("Inside the geofence")
     }
     else{
-      console.log("Circles are not overlapping")
+      console.log("Outside")
     }
   }
-  */
 
   useEffect(() => {
-    // Set initial targetCircle when the component mounts
+    startWatching()
+
+    const intervalID = setInterval(() => {
+      setMapRegion((prevRegion) => ({
+        ...prevRegion,
+        latitude: prevRegion.latitude,
+        longitude: prevRegion.longitude
+      }))
+    }, 5000)
+
     setTargetCircle({
       center: {
         latitude: mapRegion.latitude + 0.005,
         longitude: mapRegion.longitude + 0.005,
       },
       radius: 2,
-    });
-    console.log("Target: ", targetCircle)
+    })
+
+    console.log("Initial Target: ", targetCircle)
+
+    return () => clearInterval(intervalID)
   }, []);
 
-  // gets called the first time this component is displayed
+
+
+
+
   useEffect(() => {
-    startWatching();
+    console.log("Map Region", mapRegion)
+    console.log("Target: ", targetCircle)
+    // startWatching();
   }, [mapRegion])
+
+
+  
 
     return  <View style={styles.container}>
       <MapView style={styles.map}
