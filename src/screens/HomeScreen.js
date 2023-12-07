@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { Text, View, StyleSheet, Button, Image } from "react-native";
 import { Context as LocationContext } from "../context/LocationContext";
 import * as Location from "expo-location"
-import geolib from "geolib"
+import * as geolib from "geolib"
 import MapView, {Marker, Circle} from "react-native-maps";
 
 import DanielImage from "../../assets/daniel.jpg"
@@ -51,6 +51,16 @@ const HomeScreen = () => {
             longitudeDelta: 0.0001
           })
           // addLocation(location);
+
+          if (targetCircle.center.latitude === 37.78825 && targetCircle.center.longitude === -122.4324){
+            setTargetCircle({
+              center: {
+                latitude: location.coords.latitude + 0.00005,
+                longitude: location.coords.longitude + 0.00005
+              },
+              radius: 2
+            })
+          }
         }
       )
     }
@@ -64,9 +74,9 @@ const HomeScreen = () => {
 
   const checkGeofence = () => {
     const isInside = geolib.isPointWithinRadius(
-      { latitude: mapRegion.latitude, longitude: mapRegion.longitude },
-      { latitude: targetCircle.center.latitude, longitude: targetCircle.center.longitude },
-      targetCircle.radius // radius of target circle
+      { latitude: 29.8978225, longitude: -90.0646274 },
+      { latitude: 29.8978673, longitude: -90.0646157 },
+      targetCircle.radius
     )
 
     if (isInside){
@@ -77,6 +87,8 @@ const HomeScreen = () => {
     }
   }
 
+
+
   useEffect(() => {
     startWatching()
 
@@ -86,22 +98,12 @@ const HomeScreen = () => {
         latitude: prevRegion.latitude,
         longitude: prevRegion.longitude
       }))
-    }, 5000)
-
-    setTargetCircle({
-      center: {
-        latitude: mapRegion.latitude + 0.005,
-        longitude: mapRegion.longitude + 0.005,
-      },
-      radius: 2,
-    })
+    }, 1000)
 
     console.log("Initial Target: ", targetCircle)
 
     return () => clearInterval(intervalID)
   }, []);
-
-
 
 
 
