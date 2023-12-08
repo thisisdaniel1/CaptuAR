@@ -1,20 +1,26 @@
 # CaptuAR
+--INCOMPLETE--
 
-INCOMPLETE
+Firstly, clone the repo to a directory:
+`git clone`
 
-First, clone the repo:
-git clone ...
+# 1. Backend
+1. Go to the "backend" directory inside the repo
+2. Run `npm install` to install the dependencies
+3. Run `npm run dev` to start the server
+By default, it should be running on `port 3000`
 
-To install all the necessary libraries, type:
-npm install
+# 2. ngrok
+1. We need ngrok to expose our locally hosted backend, so that our mobile app can connect to it. Make sure you're running the express server (__#1. Backend__).
+2. Run `ngrok http 3000` to expose the backend.
+3. Copy the url from the "Forwarding" label. We will be needing this in the next step.
 
-Then type:
-npm start
-
-OR
-
-npx expo start --tunnel
-
+# 3. Mobile App
+1. Go to the "CaptuAR" directory inside the repo
+2. In the `CaptuAR\src\api\tracker.js` file, update the baseURL to be the url that you obtained from (__#2. ngrok__, step 3)
+2. Run `npm install` to install the dependencies
+3. Run `npm start` to start the expo app
+4. Scan the QR code from your phone or run an android emulator.
 
 Main libraries in use (for location):
 react-native-maps
