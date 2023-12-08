@@ -10,7 +10,7 @@ import DanielImage from "../../assets/daniel.jpg"
 const HomeScreen = () => {
 
   // const {addLocation, state: {currentLocation}} = useContext(LocationContext);
-  const [err, setErr] = useState(null);
+
   const [mapRegion, setMapRegion] = useState({
     latitude: 37.78825,
     longitude: -122.4324,
@@ -25,6 +25,19 @@ const HomeScreen = () => {
     },
     radius: 2
   })
+
+  /*
+  i realized from the video that I did not need default values
+  Those default values you see above were meant for when the map first displays
+  it displays with a circle for the player and a circle for the target red circle
+
+  BUT I could have just included a tertiary conditional to not display the circles ie have it be null
+  in cases where mapRegion or targetCircle were undefined
+
+  const [mapRegion, setMapRegion] = useState({})
+
+  const [targetCircle, setTargetCircle] = useState({})
+  */
 
   const startWatching = async () => {
     try{
@@ -88,6 +101,19 @@ const HomeScreen = () => {
   }
 
 
+  const setPosition = () => {
+    console.log("setting position")
+  }
+
+
+  const guessPosition = () => {
+    console.log("guessing position")
+
+    if (mapRegion.latitude){
+
+    }
+  }
+
 
   useEffect(() => {
     startWatching()
@@ -98,7 +124,7 @@ const HomeScreen = () => {
         latitude: prevRegion.latitude,
         longitude: prevRegion.longitude
       }))
-    }, 1000)
+    }, 5000)
 
     console.log("Initial Target: ", targetCircle)
 
@@ -108,8 +134,8 @@ const HomeScreen = () => {
 
 
   useEffect(() => {
-    console.log("Map Region", mapRegion)
-    console.log("Target: ", targetCircle)
+    console.log("Hider Position", mapRegion)
+    console.log("Guess: ", targetCircle)
     // startWatching();
   }, [mapRegion])
 
@@ -117,23 +143,42 @@ const HomeScreen = () => {
   
 
     return  <View style={styles.container}>
-      <MapView style={styles.map}
+      <MapView
+        style={styles.map}
         region={mapRegion}
+        /*
+        how the seeker would set where he/she thinks the hider is hiding
+
+        onPress={e => {
+          console.log(e.nativeEvent.coordinate)
+          setTargetCircle(e.nativeEvent.coordinate)
+        }}
+        */
       >
-        <Marker 
-          coordinate={mapRegion}
-          title="Marker">
-              <Image source={DanielImage} style={{ width: 50, height: 50, borderRadius: 25 }} />
-        </Marker>
+        {/* {mapRegion !== undefined ? ( */}
+          <Marker 
+            coordinate={mapRegion}
+            title="Hider"
+          >
+            <Image
+              source={DanielImage}
+              style={{ width: 50, height: 50, borderRadius: 25 }} 
+            />
+          </Marker>
+        {/* ) : null} */}
         <Circle center={mapRegion} radius={5} />
-        <Circle center={targetCircle.center} radius={targetCircle.radius} fillColor="rgba(255, 0, 0, 0.5)" />
+        
+
+        {/* {targetCircle !== undefined ? ( */}
+          <Circle coordinate={targetCircle}></Circle>
+        {/* ) : null} */}
       </MapView>
 
-      <Button title="Start Watching" onPress={startWatching} />
+      <Button title="Set position" onPress={setPosition} />
       <Text>{"\n"}</Text>
       <Text>{"\n"}</Text>
       <Text>{"\n"}</Text>
-      <Button title="Check Geoforce" onPress={checkGeofence} />
+      <Button title="Confirm guess" onPress={guessPosition} />
       {/* {err ? <Text>Please enable location services</Text> : null} */}
     </View>
   };

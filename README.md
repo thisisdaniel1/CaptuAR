@@ -1,26 +1,31 @@
 # CaptuAR
 
+INCOMPLETE
+
 First, clone the repo:
 git clone ...
 
 To install all the necessary libraries, type:
 npm install
 
-The libraries are copied from the starter app with the exception of the react-native-maps library.
-![Alt text](image-1.png)
-Which contains components like Circle and Polyline if you would like to draw custom shapes.
-For more on that visit: https://github.com/react-native-maps/react-native-maps
-
-Then to start the app type:
+Then type:
 npm start
+
 OR
+
 npx expo start --tunnel
 
-Once the app has finished bundling you should see a purple circle in San Francisco.
-Zoom out if you want a more detailed look.
 
-The circle is drawn on top of your starting position but that can be easily changed by modifying the coordinates under Circle.
-Note that the Circle component is under the MapView component like how all the elements of a list are under a list component.
-![Alt text](image-2.png)
+Main libraries in use (for location):
+react-native-maps
+expo-location
+geolib https://www.npmjs.com/package/geolib
+(note that geolib may or may not be needed)
 
-Mess with the Circle props if you want or even try to draw your own shapes!
+Once you are past the login screen. You will be able move around a map and it will occansionally update your position
+Right now we have it set so that you are represented by Daniel's face and for there to be a red circle that you cannot interact with
+(Actually the previous update had this feature, now it broken. Roll back if you want to see.)
+(Regardless, it is still capturing your coordinates if you open up your console.)
+
+But we were interested in some kind of capture the flag game where players could tag by proximity to other other players
+And for a hide and seek game where players could mark where hiders are hiding and see who is caught and who is still playing
