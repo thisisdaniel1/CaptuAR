@@ -16,8 +16,8 @@ By default, it should be running on `port 3000`
 3. Copy the url from the "Forwarding" label. We will be needing this in the next step.
 
 # 3. Mobile App
-1. Go to the "CaptuAR" directory inside the repo
-2. In the `CaptuAR\src\api\tracker.js` file, update the baseURL to be the url that you obtained from (__#2. ngrok__, step 3)
+1. Go to the "frontend" directory inside the repo
+2. In the `frontend\src\api\tracker.js` file, update the baseURL to be the url that you obtained from (__#2. ngrok__, step 3)
 2. Run `npm install` to install the dependencies
 3. Run `npm start` to start the expo app
 4. Scan the QR code from your phone or run an android emulator.
